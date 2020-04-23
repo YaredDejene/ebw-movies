@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --volumes hostPath
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: 04-transform
+  name: 04-transform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: 04-transform
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert --volumes hostPath
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: 04-transform
+    spec:
+      containers:
+      - args:
+        - "60"
+        - /code
+        - /in
+        - /work
+        - /out
+        - MQ4
+        - '-'
+        - /transformation/transformation.jar
+        image: yareddej/ebw-movies-04-transform:latest
+        imagePullPolicy: ""
+        name: 04-transform
+        resources: {}
+        volumeMounts:
+        - mountPath: /in
+          name: 04-transform-hostpath0
+        - mountPath: /work
+          name: 04-transform-hostpath1
+        - mountPath: /out
+          name: 04-transform-hostpath2
+        - mountPath: /transformation
+          name: 04-transform-hostpath3
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - hostPath:
+          path: /home/rkt/data/ebw-movies/03-tsv2csv/output
+        name: 04-transform-hostpath0
+      - hostPath:
+          path: /home/rkt/data/ebw-movies/04-transform/work
+        name: 04-transform-hostpath1
+      - hostPath:
+          path: /home/rkt/data/ebw-movies/04-transform/output
+        name: 04-transform-hostpath2
+      - hostPath:
+          path: /home/rkt/data/ebw-movies/04-transform/transformation
+        name: 04-transform-hostpath3
+status: {}

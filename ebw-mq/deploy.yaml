@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ebw-mq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ebw-mq
+  template:
+    metadata:
+      labels:
+        app: ebw-mq
+    spec:
+      containers:
+        - image: yareddej/ebw-mq
+          imagePullPolicy: Always
+          name: ebw-mq
+          ports:
+            - containerPort: 80
