@@ -39,10 +39,14 @@ echo "Fetching file pattern from: ${code_directory}/get_input_file_spec.sh"
 input_file_spec=$(${code_directory}/get_input_file_spec.sh)
 echo "Got filepattern: ${input_file_spec}"
 
+# Get step name from get_step_name.sh
+step_name=$(${code_directory}/get_step_name.sh)
+
+
 while :; do
 
     # Call script to find a file and process it 
-    "${code_directory}/fetch_one_and_process.sh" "${input_file_spec}" "${code_directory}/process_job.sh" "$@"
+    "${code_directory}/fetch_process.sh" "${input_file_spec}" "${code_directory}/process_job.sh" "${step_name}"  "$@"
     
     retn_code=$?
     echo "retn_code: ${retn_code}"

@@ -1,16 +1,18 @@
 #!/bin/bash
 # 
-# arg1: code directory
-# arg2: mq_write
-# arg3: output directory
-# arg4 ... : files to move
+# arg1: step_name
+# arg2: code directory
+# arg3: mq_write
+# arg4: output directory
+# arg5 ... : files to move
 
-code_directory=${1}
-mq_write=${2}
-output_directory=${3}
+step_name=${1}
+code_directory=${2}
+mq_write=${3}
+output_directory=${4}
 
-# Remove the first three argument to make it easy to loop through files
-shift 3
+# Remove the first four argument to make it easy to loop through files
+shift 4
 
 echo "output_directory: ${output_directory}"
 echo "mq_write: ${mq_write}"
@@ -36,7 +38,7 @@ do
     # Write to message queue
     if [ "${mq_write}" != "-" ]; then
         echo "   Writing file url ${file_name} to a message queue ${mq_write}"
-        result="$(python ${code_directory}/write_to_mq.py http://10.100.189.38:8080/ random_client_id ${mq_write} ${file_name})"
+        result="$(python ${code_directory}/write_to_mq.py http://10.100.189.38:8080/ ${step_name} ${mq_write} ${file_name})"
 
         echo "   Result: ${result}"      
     fi   
