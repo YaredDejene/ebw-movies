@@ -16,3 +16,4 @@ ebw-movies/04_transform/common_scripts/
 ebw-mq/app/bin/
 ebw-mq/app/obj/
 ebw-movies/04_transform/transformation/transformation.jar
+ebw-mq/app/appsettings.Development.json
