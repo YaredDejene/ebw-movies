@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using ebw_mq.Data;
 
 namespace ebw_mq
 {
@@ -18,6 +21,16 @@ namespace ebw_mq
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+
+            var connectionString = Configuration.GetValue<string>("ConnectionString");
+            
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(
+                    connectionString
+                )
+            );
+
             services.AddControllers().AddNewtonsoftJson();
         }
 

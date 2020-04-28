@@ -3,13 +3,13 @@ import requests
 import json
 import socket
 
-# python log.py ${step_name} ${work_path} ${log_level} ${message} ${error_in} ${line_no}
+# python log.py ${step_name} ${work_path} ${log_level} ${message} ${source} ${line_no}
 
 step_name = sys.argv[1]
 work_path = sys.argv[2]
 log_level = sys.argv[3]
 message = sys.argv[4]
-error_in = sys.argv[5]
+source = sys.argv[5]
 line_no = sys.argv[6]
 
 #TODO: Remove hard-coded value
@@ -22,7 +22,7 @@ log = {
     'Machine': socket.gethostname(),
     'Step': step_name,
     'FileProcessed': work_path,
-    'ErrorIn': error_in,
+    'Source': source,
     'LineNumber': line_no,
     'Message': message
 }
