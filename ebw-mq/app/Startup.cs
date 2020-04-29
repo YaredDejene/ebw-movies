@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -11,19 +12,21 @@ namespace ebw_mq
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            HostingEnvironment = environment;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-
-            var connectionString = Configuration.GetValue<string>("ConnectionString");
+            var connectionString = HostingEnvironment.IsDevelopment() ?
+                Configuration.GetValue<string>("ConnectionString"):
+                Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
             
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
@@ -35,9 +38,9 @@ namespace ebw_mq
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (HostingEnvironment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }

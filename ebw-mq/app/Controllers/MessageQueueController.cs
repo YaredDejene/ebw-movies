@@ -6,6 +6,7 @@ using KubeMQ.SDK.csharp.Queue;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 using System.Linq;
 
 namespace ebw_mq.Controllers
@@ -21,7 +22,7 @@ namespace ebw_mq.Controllers
         public MessageQueueController(ILogger<MessageQueueController> logger)
         {
             _logger = logger;
-            KubeMQServerAddress = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("KubeMQ")["ServerAddress"];
+            KubeMQServerAddress = Environment.GetEnvironmentVariable("KUBE_MQ_CLUSTER");
         }
 
         [Route("Receive")]

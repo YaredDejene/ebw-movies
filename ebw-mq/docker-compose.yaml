@@ -1,24 +1,17 @@
 
 version: '3.4'
 
-networks:
-  ebw-movies-ntk:
-    driver: bridge 
-
 services:
-  ebw-movies-api:
-    image: ebw-movies-api:latest
+  ebw-mq-api:
+    image: yareddej/ebw-mq:latest
     depends_on:
       - "postgres_image"
-    build:
-      context: .
-      dockerfile: Dockerfile
     ports:
       - "8000:80"     
     environment:
       DB_CONNECTION_STRING: "host=postgres_image;port=5432;database=ebw-movies;username=ebw-user;password=ebw-user"
-    networks:
-      - ebw-movies-ntk  
+      KUBE_MQ_CLUSTER: "127.0.0.1:50000"
+    network_mode: host
   
   postgres_image:
     image: postgres:latest
@@ -27,13 +20,13 @@ services:
     restart: always
     volumes:
       - db_volume:/var/lib/postgresql/data
-      - ./dbscripts/seed.sql :/docker-entrypoint-initdb.d/seed.sql
+      - ./app/dbscripts:/docker-entrypoint-initdb.d/
     environment:
       POSTGRES_USER: "ebw-user"
       POSTGRES_PASSWORD: "ebw-user"
       POSTGRES_DB: "ebw-movies"
-    networks:
-      - ebw-movies-ntk
+    network_mode: host
+
 volumes:
   db_volume:
          
