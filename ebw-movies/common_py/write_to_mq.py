@@ -12,8 +12,6 @@ client_id = os.environ['STEP_NAME']
 api_root_url = os.environ['API_URL']
 url = api_root_url + 'MessageQueue/Send'
 
-print(url)
-
 # defining a message to be sent to the MQ API 
 data = {
     'Body': file_name,

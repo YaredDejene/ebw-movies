@@ -26,10 +26,13 @@ extract_directory=${work_directory}/${file_name_no_ext}
 
 # Debug: Show Paths
 echo "!! extract_directory", ${extract_directory}
+python ${code_directory}/log.py "Info" "Started extracting into ${extract_directory}" ${file_name} "$0" "$LINENO"
 
 # Extract Zip
 echo "   Extracting without folder structure"
 unzip -j ${work_path} -d ${extract_directory}
+
+python ${code_directory}/log.py "Info" "Done extracting without folder structure" ${file_name} "$0" "$LINENO"
 
 # Move the files to output and write the new url to the message queue
 ${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${extract_directory}/*

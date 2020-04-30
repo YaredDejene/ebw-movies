@@ -26,11 +26,13 @@ work_path_csv=${work_directory}/${file_name_csv}
 
 
 echo "!! work_path_csv", ${work_path_csv}
-
+python ${code_directory}/log.py "Info" "Started converting a tsv file ${file_name} into csv" ${file_name} "$0" "$LINENO"
 
 # Converting TSV -> CSV
 echo "   Converting TSV > CSV"
 tr '\t' , < ${work_path} > ${work_path_csv}
+
+python ${code_directory}/log.py "Info" "Done converting a tsv file ${file_name} into ${file_name_csv}" ${file_name} "$0" "$LINENO"
 
 # Move the files to output and write the new url to the message queue
 ${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${work_path_csv}

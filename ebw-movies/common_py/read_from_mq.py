@@ -1,6 +1,7 @@
 import sys
 import requests 
 import json
+import os
 
 # python read_from_mq.py ${message_queue_name} 
 

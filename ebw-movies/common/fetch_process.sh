@@ -32,7 +32,7 @@ echo "mq_write: ${mq_write}"
 echo '***'
 
 echo '#'
-echo '#   Starting: fetch_one_and_process'
+echo '#   Starting: fetch_process'
 echo '#'
 
 file_name="no"
@@ -50,13 +50,13 @@ if [ $mq_read == "-" ]; then
 else
     # READ from Message Queue
     echo "Read from message queue"
-    file_name="$(python ${code_directory}/read_from_mq.py ${STEP_NAME} ${mq_read})"  
+    file_name="$(python ${code_directory}/read_from_mq.py ${mq_read})"  
 fi
 
 if [ "${file_name}" != "no" ]; then
 
     echo "// File to process ${file_name}"
-    python ${code_directory}/log.py "Info" "Detected file to be processed" ${file_name} "$0" "$LINENO"
+    python ${code_directory}/log.py "Info" "Got a file name to be processed" ${file_name} "$0" "$LINENO"
 
     # Construct Paths
     input_path=${input_directory}/${file_name}
@@ -64,21 +64,26 @@ if [ "${file_name}" != "no" ]; then
 
     # Check if file already there
     found_existing="$(find "${work_directory}" -name "${file_name}" | wc -l)"
-    #echo $found_existing
+
     if [ "${found_existing}" -eq "0" ]; then
+
         # Move to Workspace
         echo "  Moving to Workspace ${input_path} ${work_path}"
         mv ${input_path} ${work_path}
+        python ${code_directory}/log.py "Info" "File moved to workspace" ${file_name} "$0" "$LINENO"
         
         # Run the job 
         ${process_job} "${work_path}" "$@"
 
         # Cleanup
         rm -rf $work_path
+        python ${code_directory}/log.py "Info" "File removed from workspace" ${file_name} "$0" "$LINENO"
 
         exit 0
     else
         echo "// File ${file_name} already exists in working dir ... skipping operation"
+        python ${code_directory}/log.py "Warning" "File already exists in working dir ... skipping operation" ${file_name} "$0" "$LINENO"
+
         exit 1
     fi
 else

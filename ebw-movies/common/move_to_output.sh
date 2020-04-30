@@ -31,12 +31,19 @@ do
     shift
     
     echo "   Moving file ${from_file_path} to ${to_file_path}"
-    mv ${from_file_path} ${to_file_path}    
+    mv ${from_file_path} ${to_file_path}
+    python ${code_directory}/log.py "Info" "File moved ${from_file_path} to ${to_file_path}" ${file_name} "$0" "$LINENO"
 
     # Write to message queue
     if [ "${mq_write}" != "-" ]; then
-        echo "   Writing file url ${file_name} to a message queue ${mq_write}"
+        echo "   Writing file name ${file_name} to a message queue ${mq_write}"
         result="$(python ${code_directory}/write_to_mq.py ${mq_write} ${file_name})"
+
+        if [ "${result}" == "False" ]; then
+            python ${code_directory}/log.py "Info" "File name ${file_name} written to a message queue ${mq_write}" ${file_name} "$0" "$LINENO"
+        else
+            python ${code_directory}/log.py "Error" "Error in writing a file name ${file_name} to a message queue ${mq_write}" ${file_name} "$0" "$LINENO"   
+        fi
 
         echo "   Result: ${result}"      
     fi   
