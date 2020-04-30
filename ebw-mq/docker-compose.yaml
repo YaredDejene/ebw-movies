@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:80"     
     environment:
-      DB_CONNECTION_STRING: "host=postgres_image;port=5432;database=ebw-movies;username=ebw-user;password=ebw-user"
+      DB_CONNECTION_STRING: "host=localhost;port=5432;database=ebw-movies;username=ebw-user;password=ebw-user"
       KUBE_MQ_CLUSTER: "127.0.0.1:50000"
     network_mode: host
   

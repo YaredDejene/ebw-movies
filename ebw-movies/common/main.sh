@@ -4,8 +4,8 @@
 # arg3: input directory
 # arg4: work directory
 # arg5: output directory
-# arg6: message queue read url
-# arg7: message queue write url
+# arg6: message queue read
+# arg7: message queue write
 
 # arg8 ... : application params
 
@@ -17,7 +17,7 @@ output_directory=${5}
 mq_read=${6}
 mq_write=${7}
 
-# Remove two first argument to make it easy to pass the remaining params
+# Remove first argument to make it easy to pass the remaining params
 shift 1
 
 echo "frequency: ${frequency} seconds"
@@ -39,14 +39,11 @@ echo "Fetching file pattern from: ${code_directory}/get_input_file_spec.sh"
 input_file_spec=$(${code_directory}/get_input_file_spec.sh)
 echo "Got filepattern: ${input_file_spec}"
 
-# Get step name from get_step_name.sh
-step_name=$(${code_directory}/get_step_name.sh)
-
 
 while :; do
 
     # Call script to find a file and process it 
-    "${code_directory}/fetch_process.sh" "${input_file_spec}" "${code_directory}/process_job.sh" "${step_name}"  "$@"
+    "${code_directory}/fetch_process.sh" "${input_file_spec}" "${code_directory}/process_job.sh" "$@"
     
     retn_code=$?
     echo "retn_code: ${retn_code}"

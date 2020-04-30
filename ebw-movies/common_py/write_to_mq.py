@@ -1,15 +1,18 @@
 import sys
 import requests 
 import json
+import os
 
-# python write_to_mq.py ${mq_service_url} ${client_id} ${message_queue_name} ${file_name}
+# python write_to_mq.py ${message_queue_name} ${file_name}
 
-mq_service_url = sys.argv[1]
-client_id = sys.argv[2]
-message_queue_name = sys.argv[3]
-file_name = sys.argv[4]
+message_queue_name = sys.argv[1]
+file_name = sys.argv[2]
 
-url = mq_service_url + 'MessageQueue/Send'
+client_id = os.environ['STEP_NAME']
+api_root_url = os.environ['API_URL']
+url = api_root_url + 'MessageQueue/Send'
+
+print(url)
 
 # defining a message to be sent to the MQ API 
 data = {

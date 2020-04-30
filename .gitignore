@@ -1,3 +1,4 @@
+ebw-movies/.run/
 ebw-movies/00_read_zip/make_docker.sh
 ebw-movies/00_read_zip/common_py/
 ebw-movies/00_read_zip/common_scripts/
@@ -13,7 +14,7 @@ ebw-movies/03_tsv2csv/make_docker.sh
 ebw-movies/04_transform/make_docker.sh
 ebw-movies/04_transform/common_py/
 ebw-movies/04_transform/common_scripts/
+ebw-movies/04_transform/transformation/transformation.jar
 ebw-mq/app/bin/
 ebw-mq/app/obj/
-ebw-movies/04_transform/transformation/transformation.jar
 ebw-mq/app/appsettings.Development.json

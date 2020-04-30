@@ -1,20 +1,18 @@
-#!/bin/bash
-# arg1: step_name     
-# arg2: work_path
-# arg3: code directory
-# arg4: input directory
-# arg5: work directory
-# arg6: output directory
-# arg7: mq_read
-# arg8: mq_write
+#!/bin/bash 
+# arg1: work_path
+# arg2: code directory
+# arg3: input directory
+# arg4: work directory
+# arg5: output directory
+# arg6: mq_read
+# arg7: mq_write
 
-step_name=${1}
-work_path=${2}
-code_directory=${3}
-input_directory=${4}
-work_directory=${5}
-output_directory=${6}
-mq_write=${8}
+work_path=${1}
+code_directory=${2}
+input_directory=${3}
+work_directory=${4}
+output_directory=${5}
+mq_write=${7}
 
 echo "work_path: ${work_path}"
 echo "code_directory: ${code_directory}"
@@ -28,7 +26,7 @@ echo '#  Starting Process: Read zip files'
 echo '#'
 
 # Move the files to output and write the new url to the message queue
-${code_directory}/move_to_output.sh ${step_name} ${code_directory} ${mq_write} ${output_directory} ${work_path}
+${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${work_path}
 
 echo '   Done'
 

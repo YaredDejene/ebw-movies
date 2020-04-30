@@ -2,13 +2,13 @@ import sys
 import requests 
 import json
 
-# python read_from_mq.py ${mq_service_url} ${client_id} ${message_queue_name} 
+# python read_from_mq.py ${message_queue_name} 
 
-mq_service_url = sys.argv[1]
-client_id = sys.argv[2]
-message_queue_name = sys.argv[3]
+message_queue_name = sys.argv[1]
 
-url = mq_service_url + 'MessageQueue/Receive'
+client_id = os.environ['STEP_NAME']
+api_root_url = os.environ['API_URL']
+url = api_root_url + 'MessageQueue/Receive'
 
 params = {
     "ClientId": client_id,

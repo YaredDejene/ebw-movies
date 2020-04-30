@@ -1,0 +1,89 @@
+version: '3.4'
+
+services:
+  00-read-zip:
+    image: "yareddej/ebw-movies-00-read-zip:latest"
+    environment: 
+      STEP_NAME: "00-read-zip"
+      API_URL: "http://localhost:80/"
+    volumes:
+      - /home/yared/data/ebw-movies/00-read-zip/input:/in
+      - /home/yared/data/ebw-movies/00-read-zip/work:/work
+      - /home/yared/data/ebw-movies/00-read-zip/output:/out
+    network_mode: host
+    command:   
+      - '60'
+      - /code
+      - /in
+      - /work
+      - /out
+      - '-'
+      - 'MQ1'
+
+
+
+  # 01-unzip:
+  #   image: "yareddej/ebw-movies-01-unzip:latest"
+  #   command: 
+  #     - '60'
+  #     - /code
+  #     - /in
+  #     - /work
+  #     - /out
+  #     - 'MQ1'
+  #     - 'MQ2'
+  #   volumes:
+  #     - /home/yared/data/ebw-movies/00-read-zip/output:/in
+  #     - /home/yared/data/ebw-movies/01-unzip/work:/work
+  #     - /home/yared/data/ebw-movies/01-unzip/output:/out
+
+
+  # 02-split:
+  #   image: "yareddej/ebw-movies-02-split:latest"
+  #   command: 
+  #     - '60'
+  #     - /code
+  #     - /in
+  #     - /work
+  #     - /out
+  #     - 'MQ2'
+  #     - 'MQ3'
+  #   volumes:
+  #     - /home/yared/data/ebw-movies/01-unzip/output:/in
+  #     - /home/yared/data/ebw-movies/02-split/work:/work
+  #     - /home/yared/data/ebw-movies/02-split/output:/out
+
+
+  # 03-tsv2csv:
+  #   image: "yareddej/ebw-movies-03-tsv2csv:latest"
+  #   command: 
+  #     - '60'
+  #     - /code
+  #     - /in
+  #     - /work
+  #     - /out
+  #     - 'MQ3'
+  #     - 'MQ4'
+  #   volumes:
+  #     - /home/yared/data/ebw-movies/02-split/output:/in
+  #     - /home/yared/data/ebw-movies/03-tsv2csv/work:/work
+  #     - /home/yared/data/ebw-movies/03-tsv2csv/output:/out
+
+  
+  # 04-transform:
+  #   image: "yareddej/ebw-movies-04-transform:latest"
+  #   command: 
+  #     - '60'
+  #     - /code
+  #     - /in
+  #     - /work
+  #     - /out
+  #     - 'MQ4'
+  #     - '-'
+  #     - /transformation/transformation.jar
+  #   volumes:
+  #     - /home/yared/data/ebw-movies/03-tsv2csv/output:/in
+  #     - /home/yared/data/ebw-movies/04-transform/work:/work
+  #     - /home/yared/data/ebw-movies/04-transform/output:/out
+  #     - /home/yared/data/ebw-movies/04-transform/transformation:/transformation
+
