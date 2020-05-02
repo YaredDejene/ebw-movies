@@ -35,7 +35,7 @@ echo '#'
 echo '#   Starting: fetch_process'
 echo '#'
 
-file_name="no"
+file_name=""
 
 if [ $mq_read == "-" ]; then
     # Check if there are files to process
@@ -50,13 +50,13 @@ if [ $mq_read == "-" ]; then
 else
     # READ from Message Queue
     echo "Read from message queue"
-    file_name="$(python ${code_directory}/read_from_mq.py ${mq_read})"  
+    file_name="$(${code_directory}/read_from_mq.sh ${mq_read})"
 fi
 
-if [ "${file_name}" != "no" ]; then
+if [ -n "${file_name}" ]; then
 
     echo "// File to process ${file_name}"
-    python ${code_directory}/log.py "Info" "Got a file name to be processed" ${file_name} "$0" "$LINENO"
+    ${code_directory}/log.sh "Info" "Got a file name to be processed" "${file_name}" "$0" "$LINENO"
 
     # Construct Paths
     input_path=${input_directory}/${file_name}
@@ -70,19 +70,19 @@ if [ "${file_name}" != "no" ]; then
         # Move to Workspace
         echo "  Moving to Workspace ${input_path} ${work_path}"
         mv ${input_path} ${work_path}
-        python ${code_directory}/log.py "Info" "File moved to workspace" ${file_name} "$0" "$LINENO"
+        ${code_directory}/log.sh "Info" "File moved to workspace" "${file_name}" "$0" "$LINENO"
         
         # Run the job 
         ${process_job} "${work_path}" "$@"
 
         # Cleanup
         rm -rf $work_path
-        python ${code_directory}/log.py "Info" "File removed from workspace" ${file_name} "$0" "$LINENO"
+        ${code_directory}/log.sh "Info" "File removed from workspace" "${file_name}" "$0" "$LINENO"
 
         exit 0
     else
         echo "// File ${file_name} already exists in working dir ... skipping operation"
-        python ${code_directory}/log.py "Warning" "File already exists in working dir ... skipping operation" ${file_name} "$0" "$LINENO"
+        ${code_directory}/log.sh "Warning" "File already exists in working dir ... skipping operation" ${file_name} "$0" "$LINENO"
 
         exit 1
     fi

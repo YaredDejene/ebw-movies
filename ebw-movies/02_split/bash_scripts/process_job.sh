@@ -36,19 +36,19 @@ mkdir ${extract_directory}
 
 # Debug: Show Paths
 echo "!! extract_directory", ${extract_directory}
-python ${code_directory}/log.py "Info" "Started splitting file into ${extract_directory}" ${file_name} "$0" "$LINENO"
+${code_directory}/log.sh "Info" "Started splitting file into ${extract_directory}" ${file_name} "$0" "$LINENO"
 
 echo "   Split file int work directory"
 split -l 800000 --additional-suffix=.tsv ${work_path}  ${split_file_suffix}
 
-python ${code_directory}/log.py "Info" "Done splitting file into" ${file_name} "$0" "$LINENO"
+${code_directory}/log.sh "Info" "Done splitting file into" ${file_name} "$0" "$LINENO"
 
 # Move the files to output and write the new url to the message queue
 ${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${extract_directory}/*
 
 # Cleanup
 rm -rf $extract_directory
-python ${code_directory}/log.py "Info" "Removed temporary working directory: ${extract_directory}" ${file_name} "$0" "$LINENO"
+${code_directory}/log.sh "Info" "Removed temporary working directory: ${extract_directory}" ${file_name} "$0" "$LINENO"
 
 echo '   Done'
 

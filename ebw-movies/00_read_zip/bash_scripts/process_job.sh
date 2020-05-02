@@ -27,13 +27,13 @@ echo '#'
 
 file_name=${work_path##*/}
 
-python ${code_directory}/log.py "Info" "Started file processing: collect files from source directory" ${file_name} "$0" "$LINENO"
+${code_directory}/log.sh "Info" "Started file processing: collect files from source directory" ${file_name} "$0" "$LINENO"
 
 # Move the files to output and write the new url to the message queue
 ${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${work_path}
 
 
-python ${code_directory}/log.py "Info" "Done file processing" ${file_name} "$0" "$LINENO"
+${code_directory}/log.sh "Info" "Done file processing" ${file_name} "$0" "$LINENO"
 
 echo '   Done'
 

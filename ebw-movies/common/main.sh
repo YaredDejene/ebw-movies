@@ -34,6 +34,9 @@ echo '#'
 echo '#   Starting: main'
 echo '#'
 
+# Initialize configuration files
+${code_directory}/init_configs.sh "${code_directory}"
+
 # What files to look for ?
 echo "Fetching file pattern from: ${code_directory}/get_input_file_spec.sh"
 input_file_spec=$(${code_directory}/get_input_file_spec.sh)

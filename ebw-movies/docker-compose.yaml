@@ -1,16 +1,17 @@
-version: '3.4'
+version: '3.7'
 
 services:
   00-read-zip:
     image: "yareddej/ebw-movies-00-read-zip:latest"
     environment: 
-      STEP_NAME: "00-read-zip"
-      API_URL: "http://localhost:80/"
+      - STEP_NAME="00-read-zip"
+      - KUBEMQ_HOST=kubemq
     volumes:
       - /home/yared/data/ebw-movies/00-read-zip/input:/in
       - /home/yared/data/ebw-movies/00-read-zip/work:/work
       - /home/yared/data/ebw-movies/00-read-zip/output:/out
-    network_mode: host
+    networks: 
+      -  ebw-movies-ntk
     command:   
       - '60'
       - /code
@@ -25,13 +26,14 @@ services:
   01-unzip:
     image: "yareddej/ebw-movies-01-unzip:latest"
     environment: 
-      STEP_NAME: "01-unzip"
-      API_URL: "http://localhost:80/"
+      - STEP_NAME="01-unzip"
+      - KUBEMQ_HOST=kubemq"
     volumes:
       - /home/yared/data/ebw-movies/00-read-zip/output:/in
       - /home/yared/data/ebw-movies/01-unzip/work:/work
       - /home/yared/data/ebw-movies/01-unzip/output:/out
-    network_mode: host
+    networks: 
+     -  ebw-movies-ntk
     command: 
       - '60'
       - /code
@@ -43,66 +45,90 @@ services:
 
 
 
-  02-split:
-    image: "yareddej/ebw-movies-02-split:latest"
-    environment: 
-      STEP_NAME: "02-split"
-      API_URL: "http://localhost:80/"
-    volumes:
-      - /home/yared/data/ebw-movies/01-unzip/output:/in
-      - /home/yared/data/ebw-movies/02-split/work:/work
-      - /home/yared/data/ebw-movies/02-split/output:/out
-    network_mode: host
-    command: 
-      - '60'
-      - /code
-      - /in
-      - /work
-      - /out
-      - 'MQ2'
-      - 'MQ3'
+  # 02-split:
+  #   image: "yareddej/ebw-movies-02-split:latest"
+  #   environment: 
+  #     - STEP_NAME="02-split"
+  #     - KUBEMQ_HOST=kubemq
+  #   volumes:
+  #     - /home/yared/data/ebw-movies/01-unzip/output:/in
+  #     - /home/yared/data/ebw-movies/02-split/work:/work
+  #     - /home/yared/data/ebw-movies/02-split/output:/out
+  #   networks: 
+  #    -  ebw-movies-ntk
+  #   command: 
+  #     - '60'
+  #     - /code
+  #     - /in
+  #     - /work
+  #     - /out
+  #     - 'MQ2'
+  #     - 'MQ3'
 
 
-  03-tsv2csv:
-    image: "yareddej/ebw-movies-03-tsv2csv:latest"
-    environment: 
-      STEP_NAME: "03-tsv2csv"
-      API_URL: "http://localhost:80/"
-    volumes:
-      - /home/yared/data/ebw-movies/02-split/output:/in
-      - /home/yared/data/ebw-movies/03-tsv2csv/work:/work
-      - /home/yared/data/ebw-movies/03-tsv2csv/output:/out
-    network_mode: host
-    command: 
-      - '60'
-      - /code
-      - /in
-      - /work
-      - /out
-      - 'MQ3'
-      - 'MQ4'
+  # 03-tsv2csv:
+  #   image: "yareddej/ebw-movies-03-tsv2csv:latest"
+  #   environment: 
+  #     - STEP_NAME="03-tsv2csv"
+  #     - KUBEMQ_HOST=kubemq
+  #   volumes:
+  #     - /home/yared/data/ebw-movies/02-split/output:/in
+  #     - /home/yared/data/ebw-movies/03-tsv2csv/work:/work
+  #     - /home/yared/data/ebw-movies/03-tsv2csv/output:/out
+  #   networks: 
+  #    -  ebw-movies-ntk
+  #   command: 
+  #     - '60'
+  #     - /code
+  #     - /in
+  #     - /work
+  #     - /out
+  #     - 'MQ3'
+  #     - 'MQ4'
 
 
   
-  04-transform:
-    image: "yareddej/ebw-movies-04-transform:latest"
-    environment: 
-      STEP_NAME: "04-transform"
-      API_URL: "http://localhost:80/"
+  # 04-transform:
+  #   image: "yareddej/ebw-movies-04-transform:latest"
+  #   environment: 
+  #     - STEP_NAME="04-transform"
+  #     - KUBEMQ_HOST=kubemq
+  #   volumes:
+  #     - /home/yared/data/ebw-movies/03-tsv2csv/output:/in
+  #     - /home/yared/data/ebw-movies/04-transform/work:/work
+  #     - /home/yared/data/ebw-movies/04-transform/output:/out
+  #     - /home/yared/data/ebw-movies/04-transform/transformation:/transformation
+  #   networks: 
+  #    -  ebw-movies-ntk
+  #   command: 
+  #     - '60'
+  #     - /code
+  #     - /in
+  #     - /work
+  #     - /out
+  #     - 'MQ4'
+  #     - '-'
+  #     - /transformation/transformation.jar
+
+  kubemq:
+    image: kubemq/kubemq:latest
+    container_name: kubemq
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+      - "50000:50000"
+    environment:
+      - KUBEMQ_HOST=kubemq
+      - KUBEMQ_TOKEN="8297ae1b-d2bc-40b4-bf95-39a67162984d"
+    networks: 
+      -  ebw-movies-ntk
     volumes:
-      - /home/yared/data/ebw-movies/03-tsv2csv/output:/in
-      - /home/yared/data/ebw-movies/04-transform/work:/work
-      - /home/yared/data/ebw-movies/04-transform/output:/out
-      - /home/yared/data/ebw-movies/04-transform/transformation:/transformation
-    network_mode: host
-    command: 
-      - '60'
-      - /code
-      - /in
-      - /work
-      - /out
-      - 'MQ4'
-      - '-'
-      - /transformation/transformation.jar
+      - kubemq_vol:/store
+
+networks:
+  ebw-movies-ntk:
+    driver: bridge 
+volumes:
+  kubemq_vol:
 
 
