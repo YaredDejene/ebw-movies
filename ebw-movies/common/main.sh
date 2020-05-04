@@ -49,8 +49,6 @@ while :; do
     "${code_directory}/fetch_process.sh" "${input_file_spec}" "${code_directory}/process_job.sh" "$@"
     
     retn_code=$?
-    echo "retn_code: ${retn_code}"
-
     if [ ${retn_code} -eq 0 ]; then
         # File processed ... try next  
         echo "File processed successfully"

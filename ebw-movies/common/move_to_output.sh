@@ -5,9 +5,12 @@
 # arg3: output directory
 # arg4 ... : files to move
 
+
 code_directory=${1}
 mq_write=${2}
 output_directory=${3}
+
+. ${code_directory}/log.sh
 
 # Remove the first three argument to make it easy to loop through files
 shift 3
@@ -30,9 +33,10 @@ do
     to_file_path=${output_directory}/${file_name}
     shift
     
-    echo "   Moving file ${from_file_path} to ${to_file_path}"
-    mv ${from_file_path} ${to_file_path}
-    ${code_directory}/log.sh "Info" "File moved ${from_file_path} to ${to_file_path}" ${file_name} "$0" "$LINENO"
+    #   Moving file ${from_file_path} to ${to_file_path}"
+    echo "Moving file ${from_file_path} to ${to_file_path}"
+    mv ${from_file_path} ${to_file_path} || handle_error "Error in moving file from ${from_file_path} to ${to_file_path}" "${file_name}" "$0" "$LINENO"
+    log_info "File moved from ${from_file_path} to ${to_file_path}" "${file_name}" "$0"
 
     # Write to message queue
     if [  "${mq_write}" != "-" ]; then
@@ -40,12 +44,11 @@ do
         result="$(${code_directory}/write_to_mq.sh ${mq_write} ${file_name})"
 
         if [ -n "${result}" ]; then
-            ${code_directory}/log.sh "Info" "File name ${file_name} written to a message queue ${mq_write}" ${file_name} "$0" "$LINENO"
+            log_info "File name ${file_name} written to a message queue ${mq_write}" "${file_name}" "$0"
         else
-            ${code_directory}/log.sh "Error" "Error in writing a file name ${file_name} to a message queue ${mq_write}" ${file_name} "$0" "$LINENO"   
+            handle_error "Error in writing a file name ${file_name} to a message queue ${mq_write}" "${file_name}" "$0" "$LINENO"   
         fi
-
-        echo "   Result: ${result}"      
+   
     fi   
     
 done
