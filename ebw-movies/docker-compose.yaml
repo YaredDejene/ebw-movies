@@ -27,7 +27,7 @@ services:
     image: "yareddej/ebw-movies-01-unzip:latest"
     environment: 
       - STEP_NAME="01-unzip"
-      - KUBEMQ_HOST=kubemq"
+      - KUBEMQ_HOST=kubemq
     volumes:
       - /home/yared/data/ebw-movies/00-read-zip/output:/in
       - /home/yared/data/ebw-movies/01-unzip/work:/work

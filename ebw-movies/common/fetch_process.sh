@@ -35,7 +35,6 @@ echo '#'
 echo '#   Starting: fetch_process'
 echo '#'
 
-file_name=""
 
 if [ $mq_read == "-" ]; then
     # Check if there are files to process
@@ -52,6 +51,8 @@ else
     echo "Read from message queue"
     file_name="$(${code_directory}/read_from_mq.sh ${mq_read})"
 fi
+
+echo "File name: ${file_name}"
 
 if [ -n "${file_name}" ]; then
 

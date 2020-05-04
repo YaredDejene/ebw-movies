@@ -12,7 +12,7 @@ message=${2}
 #-----------------------------------------------------------------
 
 # if the message successfully, it will return a line having key words of 'queue message sent'
-result=$( kubetools queue send "${mq_write}" "${message}" 2>&1 | grep 'queue message sent' )
+result=$(kubetools queue send "${mq_write}" "${message}" 2>&1 | grep 'queue message sent')
 
 echo ${result}
 
