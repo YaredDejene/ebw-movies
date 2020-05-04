@@ -45,70 +45,70 @@ services:
 
 
 
-  # 02-split:
-  #   image: "yareddej/ebw-movies-02-split:latest"
-  #   environment: 
-  #     - STEP_NAME="02-split"
-  #     - KUBEMQ_HOST=kubemq
-  #   volumes:
-  #     - /home/yared/data/ebw-movies/01-unzip/output:/in
-  #     - /home/yared/data/ebw-movies/02-split/work:/work
-  #     - /home/yared/data/ebw-movies/02-split/output:/out
-  #   networks: 
-  #    -  ebw-movies-ntk
-  #   command: 
-  #     - '60'
-  #     - /code
-  #     - /in
-  #     - /work
-  #     - /out
-  #     - 'MQ2'
-  #     - 'MQ3'
+  02-split:
+    image: "yareddej/ebw-movies-02-split:latest"
+    environment: 
+      - STEP_NAME="02-split"
+      - KUBEMQ_HOST=kubemq
+    volumes:
+      - /home/yared/data/ebw-movies/01-unzip/output:/in
+      - /home/yared/data/ebw-movies/02-split/work:/work
+      - /home/yared/data/ebw-movies/02-split/output:/out
+    networks: 
+     -  ebw-movies-ntk
+    command: 
+      - '60'
+      - /code
+      - /in
+      - /work
+      - /out
+      - 'MQ2'
+      - 'MQ3'
 
 
-  # 03-tsv2csv:
-  #   image: "yareddej/ebw-movies-03-tsv2csv:latest"
-  #   environment: 
-  #     - STEP_NAME="03-tsv2csv"
-  #     - KUBEMQ_HOST=kubemq
-  #   volumes:
-  #     - /home/yared/data/ebw-movies/02-split/output:/in
-  #     - /home/yared/data/ebw-movies/03-tsv2csv/work:/work
-  #     - /home/yared/data/ebw-movies/03-tsv2csv/output:/out
-  #   networks: 
-  #    -  ebw-movies-ntk
-  #   command: 
-  #     - '60'
-  #     - /code
-  #     - /in
-  #     - /work
-  #     - /out
-  #     - 'MQ3'
-  #     - 'MQ4'
+  03-tsv2csv:
+    image: "yareddej/ebw-movies-03-tsv2csv:latest"
+    environment: 
+      - STEP_NAME="03-tsv2csv"
+      - KUBEMQ_HOST=kubemq
+    volumes:
+      - /home/yared/data/ebw-movies/02-split/output:/in
+      - /home/yared/data/ebw-movies/03-tsv2csv/work:/work
+      - /home/yared/data/ebw-movies/03-tsv2csv/output:/out
+    networks: 
+     -  ebw-movies-ntk
+    command: 
+      - '60'
+      - /code
+      - /in
+      - /work
+      - /out
+      - 'MQ3'
+      - 'MQ4'
 
 
   
-  # 04-transform:
-  #   image: "yareddej/ebw-movies-04-transform:latest"
-  #   environment: 
-  #     - STEP_NAME="04-transform"
-  #     - KUBEMQ_HOST=kubemq
-  #   volumes:
-  #     - /home/yared/data/ebw-movies/03-tsv2csv/output:/in
-  #     - /home/yared/data/ebw-movies/04-transform/work:/work
-  #     - /home/yared/data/ebw-movies/04-transform/output:/out
-  #     - /home/yared/data/ebw-movies/04-transform/transformation:/transformation
-  #   networks: 
-  #    -  ebw-movies-ntk
-  #   command: 
-  #     - '60'
-  #     - /code
-  #     - /in
-  #     - /work
-  #     - /out
-  #     - 'MQ4'
-  #     - '-'
-  #     - /transformation/transformation.jar
+  04-transform:
+    image: "yareddej/ebw-movies-04-transform:latest"
+    environment: 
+      - STEP_NAME="04-transform"
+      - KUBEMQ_HOST=kubemq
+    volumes:
+      - /home/yared/data/ebw-movies/03-tsv2csv/output:/in
+      - /home/yared/data/ebw-movies/04-transform/work:/work
+      - /home/yared/data/ebw-movies/04-transform/output:/out
+      - /home/yared/data/ebw-movies/04-transform/transformation:/transformation
+    networks: 
+     -  ebw-movies-ntk
+    command: 
+      - '60'
+      - /code
+      - /in
+      - /work
+      - /out
+      - 'MQ4'
+      - '-'
+      - /transformation/transformation.jar
 
   kubemq:
     image: kubemq/kubemq:latest
