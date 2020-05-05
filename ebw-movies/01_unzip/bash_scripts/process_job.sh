@@ -14,9 +14,14 @@ work_directory=${4}
 output_directory=${5}
 mq_write=${7}
 
+
 echo '#'
-echo '#  Unzipping ', ${work_path}
+echo '#  Starting Process: Unzipping ', ${work_path}
 echo '#'
+
+#import log util functions 
+. ${code_directory}/log.sh
+
 
 # Construct Paths
 file_name=${work_path##*/}
@@ -26,16 +31,19 @@ extract_directory=${work_directory}/${file_name_no_ext}
 
 # Debug: Show Paths
 echo "!! extract_directory", ${extract_directory}
-${code_directory}/log.sh "Info" "Started extracting into ${extract_directory}" ${file_name} "$0" "$LINENO"
+log_info "Started extracting into ${extract_directory}" "${file_name}" "$0"
 
 # Extract Zip
 echo "   Extracting without folder structure"
-unzip -j ${work_path} -d ${extract_directory}
+unzip -j ${work_path} -d ${extract_directory} \
+    || handle_error "Error while extracting a file: ${file_name} into ${extract_directory} directory " "${file_name}" "$0" "$LINENO"  
 
-${code_directory}/log.sh "Info" "Done extracting without folder structure" ${file_name} "$0" "$LINENO"
+log_info "Done extracting without folder structure" "${file_name}" "$0"
 
 # Move the files to output and write the new url to the message queue
-${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${extract_directory}/*
+log_info "Started moving extracted files into output directory" "${file_name}" "$0"
+${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${extract_directory}/*  \
+    || handle_error "Error occured while moving extracted files into output directory" "${file_name}" "$0" "$LINENO"
 
 echo '   Done'
 

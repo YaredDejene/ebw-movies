@@ -15,8 +15,11 @@ output_directory=${5}
 mq_write=${7}
 
 echo '#'
-echo '#  Splitting ', ${work_path}
+echo '#  Starting Process: Splitting ', ${work_path}
 echo '#'
+
+#import log util functions 
+. ${code_directory}/log.sh
 
 # Construct Paths
 file_name=${work_path##*/}
@@ -36,19 +39,21 @@ mkdir ${extract_directory}
 
 # Debug: Show Paths
 echo "!! extract_directory", ${extract_directory}
-${code_directory}/log.sh "Info" "Started splitting file into ${extract_directory}" ${file_name} "$0" "$LINENO"
+log_info "Started splitting file into ${extract_directory}" ${file_name} "$0"
 
-echo "   Split file int work directory"
-split -l 800000 --additional-suffix=.tsv ${work_path}  ${split_file_suffix}
+echo "   Split file into work directory"
+split -l 800000 --additional-suffix=.tsv ${work_path}  ${split_file_suffix} \
+    || handle_error "Error while splitting a file: ${file_name} into ${extract_directory} directory " "${file_name}" "$0" "$LINENO"  
 
-${code_directory}/log.sh "Info" "Done splitting file into" ${file_name} "$0" "$LINENO"
+log_info "Done splitting a file: ${file_name}" ${file_name} "$0" 
 
 # Move the files to output and write the new url to the message queue
-${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${extract_directory}/*
+${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${extract_directory}/* \
+    || handle_error "Error occured while moving splitted files into output directory" "${file_name}" "$0" "$LINENO"
 
 # Cleanup
 rm -rf $extract_directory
-${code_directory}/log.sh "Info" "Removed temporary working directory: ${extract_directory}" ${file_name} "$0" "$LINENO"
+log_info "Removed temporary working directory: ${extract_directory}" ${file_name} "$0"
 
 echo '   Done'
 

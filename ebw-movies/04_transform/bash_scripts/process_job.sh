@@ -29,18 +29,20 @@ work_path_transformed=${work_directory}/${file_name_transformed}
 
 # Debug: Show Paths
 echo "!! work_path_transformed", ${work_path_transformed}
-${code_directory}/log.sh "Info" "Started transforming a csv file ${file_name}" ${file_name} "$0" "$LINENO"
+log_info "Started transforming a csv file ${file_name}" ${file_name} "$0" 
 
 # Transforming
 echo "   Transforming"
 java -Xmx4g -jar ${transformation_full_path} \
     ${work_path} \
-    ${work_path_transformed}
+    ${work_path_transformed} \
+    || handle_error "Error while transforming a file: ${file_name} into ${file_name_transformed}" "${file_name}" "$0" "$LINENO"
 
-${code_directory}/log.sh "Info" "Done transforming a csv file ${file_name} into ${file_name_transformed}" ${file_name} "$0" "$LINENO"
+log_info "Done transforming a csv file ${file_name} into ${file_name_transformed}" ${file_name} "$0"
 
 # Move the files to output and write the new url to the message queue
-${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${work_path_transformed}
+${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${work_path_transformed} \
+    || handle_error "Error occured while moving a tranformed file into output directory" "${file_name}" "$0" "$LINENO"
 
 echo '   Done'
 

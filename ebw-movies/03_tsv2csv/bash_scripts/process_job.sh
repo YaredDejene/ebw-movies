@@ -15,8 +15,11 @@ output_directory=${5}
 mq_write=${7}
 
 echo '#'
-echo '#  TSV to CSV ', ${work_path}
+echo '#  Starting Process: TSV to CSV ', ${work_path}
 echo '#'
+
+#import log util functions 
+. ${code_directory}/log.sh
 
 # Construct Paths
 file_name=${work_path##*/}
@@ -26,17 +29,18 @@ work_path_csv=${work_directory}/${file_name_csv}
 
 
 echo "!! work_path_csv", ${work_path_csv}
-${code_directory}/log.sh "Info" "Started converting a tsv file ${file_name} into csv" ${file_name} "$0" "$LINENO"
+log_info "Started converting a tsv file ${file_name} into csv" ${file_name} "$0" 
 
 # Converting TSV -> CSV
 echo "   Converting TSV > CSV"
-tr '\t' , < ${work_path} > ${work_path_csv}
+tr '\t' , < ${work_path} > ${work_path_csv} \
+    || handle_error "Error while converting a tsv file: ${file_name} into csv" "${file_name}" "$0" "$LINENO"  
 
-${code_directory}/log.sh "Info" "Done converting a tsv file ${file_name} into ${file_name_csv}" ${file_name} "$0" "$LINENO"
+log_info "Done converting a tsv file ${file_name} into ${file_name_csv}" ${file_name} "$0" 
 
 # Move the files to output and write the new url to the message queue
-${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${work_path_csv}
-
+${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${work_path_csv} \
+    || handle_error "Error occured while moving converted csv file into output directory" "${file_name}" "$0" "$LINENO"
 
 echo '   Done'
 
