@@ -28,7 +28,6 @@ log()
 }
 
 
-
 log_error()
 {
     log "Error" "$@"
@@ -48,5 +47,24 @@ handle_error()
 {
     log_error "$@"
     exit 1
+}
+
+
+# Simple function to fetch a file from a given directory 
+fetch_file()
+{
+    directory=${1}
+    file_spec=${2}
+
+    nfiles="$(find "${directory}" -name "${file_spec}" | wc -l)"
+    
+    if [ "${nfiles}" -gt "0" ]; then
+        # Extract File Name in random pos
+        file_num=`shuf -i1-${nfiles} -n1`
+        path="$(find "${directory}" -name "${file_spec}" | head "-${file_num}" | tail -1)"
+        file=${path##*/}
+    fi
+
+    echo "$file"
 }
 

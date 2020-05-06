@@ -20,7 +20,7 @@ echo '#  Starting Process: Read zip files'
 echo '#'
 
 #import log util functions 
-. ${code_directory}/log.sh
+. ${code_directory}/util.sh
 
 file_name=${work_path##*/}
 

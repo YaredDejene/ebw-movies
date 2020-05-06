@@ -19,7 +19,7 @@ echo '#  Starting Process: Splitting ', ${work_path}
 echo '#'
 
 #import log util functions 
-. ${code_directory}/log.sh
+. ${code_directory}/util.sh
 
 # Construct Paths
 file_name=${work_path##*/}

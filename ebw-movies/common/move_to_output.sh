@@ -11,7 +11,7 @@ mq_write=${2}
 output_directory=${3}
 
 #import log util functions 
-. ${code_directory}/log.sh
+. ${code_directory}/util.sh
 
 # Remove the first three argument to make it easy to loop through files
 shift 3

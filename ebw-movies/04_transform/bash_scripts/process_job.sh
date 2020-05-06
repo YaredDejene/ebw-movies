@@ -20,6 +20,9 @@ echo '#'
 echo '#  Cleaning using Graftenizer: ', ${work_path}
 echo '#'
 
+#import log util functions 
+. ${code_directory}/util.sh
+
 # Construct Paths
 file_name=${work_path##*/}
 file_name_no_ext=${file_name%.*}

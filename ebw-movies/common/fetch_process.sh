@@ -39,25 +39,30 @@ echo '***'
 
 
 #import log util functions 
-. ${code_directory}/log.sh
+. ${code_directory}/util.sh
 
 # Remove the first three arguments to make it easy to pass the remaining params
 shift 3
 
-if [ $mq_read == "-" ]; then
-    # Check if there are files to process
-    nfiles="$(find "${input_directory}" -name "${input_file_spec}" | wc -l)"
-    echo "nfiles: ${nfiles}"
-    if [ "${nfiles}" -gt "0" ]; then
-        # Extract File Name in random pos
-        file_num=`shuf -i1-${nfiles} -n1`
-        input_path="$(find "${input_directory}" -name "${input_file_spec}" | head "-${file_num}" | tail -1)"
-        file_name=${input_path##*/}
-    fi
-else
+file_directory=${input_directory}
+
+if [ $mq_read != "-" ]; then
     # READ from Message Queue
     echo "Read from message queue"
     file_name=$(${code_directory}/read_from_mq.sh "${mq_read}")
+else
+    # Check if there are files to process in the input directory
+    file_name=$(fetch_file "${input_directory}" "${input_file_spec}")    
+fi
+
+# Visit sandbox directory if there are no more files in the input directory or no file names comming from the message queue
+if [ -z "${file_name}" ]; then
+    file_name=$(fetch_file "${sandbox_directory}" "${input_file_spec}")
+
+    # Point to sandbox directory instead of the input directory
+    if [ -n "${file_name}" ]; then
+        file_directory=${sandbox_directory}
+    fi
 fi
 
 
@@ -67,7 +72,7 @@ if [ -n "${file_name}" ]; then
     log_info "Got a file name to be processed" "${file_name}" "$0"
 
     # Construct Paths
-    input_path=${input_directory}/${file_name}
+    input_path=${file_directory}/${file_name}
     work_path=${work_directory}/${file_name}
 
     # Check if file already there
@@ -86,28 +91,34 @@ if [ -n "${file_name}" ]; then
         ${process_job} "${work_path}" "$@" 
 
         retn_code=$?
-        if [ ${retn_code} -eq 0 ]; then
+        if [ ${retn_code} -ne 0 ]; then
 
-            # Cleanup
-            rm -rf $work_path \
-                || handle_error "Error occured while removing file: ${work_path} from the workspace" "${file_name}" "$0" "$LINENO"
-            
-            log_info "File removed from workspace" "${file_name}" "$0"
+            # check if the file been sandboxed before 
+            if [[ $file_name == *"SANDBOXFILE"* ]]; then
+                sandbox_path="${sandbox_directory}/${file_name}.archived"
+            else
+                # Attach current timestamp to the filename to make it unique in the sandbox directory
+                timestamp=$(date +%s%N) 
+                sandbox_path="${sandbox_directory}/SANDBOXFILE_${timestamp}_${file_name}"
+            fi
 
-            exit 0
-        else
-            # Move the file from workspace into the sandbox 
-            # Attach current timestamp to the filename to make it unique in the sandbox directory
-            timestamp=$(date +%s%N)
-            sandbox_path="${sandbox_directory}/${timestamp}_${file_name}"
-
+            # Move the file from workspace into the sandbox            
             echo "  Moving to Workspace workspace file into sandbox"
             mv ${work_path} ${sandbox_path}            
 
             # handle the exception with exit 1
-            handle_error "Unable to process file: ${file_name} ... moved to sandbox ${sandbox_directory}" "${file_name}" "$0" "$LINENO"
+            handle_error "Unable to process file: ${file_name} ... moved to sandbox ${sandbox_path}" "${file_name}" "$0" "$LINENO"
 
         fi
+
+        # Cleanup
+        rm -rf $work_path \
+            || handle_error "Error occured while removing file: ${work_path} from the workspace" "${file_name}" "$0" "$LINENO"
+            
+        log_info "File removed from workspace" "${file_name}" "$0"
+
+        exit 0
+
     else
         echo "// File ${file_name} already exists in working dir ... skipping operation"        
         log_warning "File already exists in working dir ... skipping operation" "${file_name}" "$0" "$LINENO"

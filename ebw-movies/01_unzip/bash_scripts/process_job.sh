@@ -20,7 +20,7 @@ echo '#  Starting Process: Unzipping ', ${work_path}
 echo '#'
 
 #import log util functions 
-. ${code_directory}/log.sh
+. ${code_directory}/util.sh
 
 
 # Construct Paths
@@ -44,6 +44,10 @@ log_info "Done extracting without folder structure" "${file_name}" "$0"
 log_info "Started moving extracted files into output directory" "${file_name}" "$0"
 ${code_directory}/move_to_output.sh ${code_directory} ${mq_write} ${output_directory} ${extract_directory}/*  \
     || handle_error "Error occured while moving extracted files into output directory" "${file_name}" "$0" "$LINENO"
+
+# Cleanup
+rm -rf $extract_directory
+log_info "Removed temporary working directory: ${extract_directory}" ${file_name} "$0"
 
 echo '   Done'
 
